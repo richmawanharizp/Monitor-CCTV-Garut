@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garut CCTV Monitor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f8ff;
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1e3799;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .location-btn {
+            background: #4a69bd;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        
+        .location-btn:hover {
+            background: #1e3799;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(30, 55, 153, 0.3);
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .video-container.active {
+            display: block;
+        }
+        
+        video {
+            width: 100%;
+            height: auto;
+            background: #000;
+        }
+        
+        .location-name {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            color: white;
+            background: rgba(30, 55, 153, 0.8);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            z-index: 1;
+        }
+        
+        .note {
+            text-align: center;
+            margin-top: 20px;
+            color: #4a69bd;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖥️ MONITOR CCTV KABUPATEN GARUT</h1>
+        
+        <div class="button-grid">
+		<button class="location-btn" onclick="showVideo('tarogong', 'BUNDERAN TAROGONG')">BUNDERAN TAROGONG</button>
+            <button class="location-btn" onclick="showVideo('simlim', 'BUNDERAN SIMLIM')">BUNDERAN SIMLIM</button>
+			<button class="location-btn" onclick="showVideo('leuwidaun', 'BUNDERAN LEUWIDAUN')">BUNDERAN LEUWIDAUN</button>
+            <button class="location-btn" onclick="showVideo('kerkoff', 'BUNDERAN KERKOFF')">BUNDERAN KERKOFF</button>
+			<button class="location-btn" onclick="showVideo('suci', 'BUNDERAN SUCI')">BUNDERAN SUCI</button>
+			<button class="location-btn" onclick="showVideo('ciwalen', 'SIMPANG ASIA CIWALEN')">SIMPANG ASIA CIWALEN</button>
+			<button class="location-btn" onclick="showVideo('pengkolan', 'PENGKOLAN')">PENGKOLAN</button>
+			<button class="location-btn" onclick="showVideo('bjb', 'BANK BJB')">BANK BJB</button>
+			<button class="location-btn" onclick="showVideo('bakorwil', 'ALUN-ALUN GARUT')">ALUN-ALUN GARUT</button>
+			<button class="location-btn" onclick="showVideo('sukadana', 'SIMPANG SUKADANA')">SIMPANG SUKADANA</button>
+            <button class="location-btn" onclick="showVideo('maktal', 'MAKTAL POS')">MAKTAL POS</button>
+			<button class="location-btn" onclick="showVideo('jembatanmaktal', 'JEMBATAN MAKTAL')">JEMBATAN MAKTAL</button>
+			<button class="location-btn" onclick="showVideo('cipanas', 'CIPANAS')">CIPANAS</button>
+			<button class="location-btn" onclick="showVideo('sigobing', 'SIGOBING')">SIGOBING</button>
+			<button class="location-btn" onclick="showVideo('wanaraja', 'PASAR WANARAJA')">PASAR WANARAJA</button>
+			<button class="location-btn" onclick="showVideo('kadungora', 'KADUNGORA')">KADUNGORA</button>
+			<button class="location-btn" onclick="showVideo('limbangan', 'LIMBANGAN')">LIMBANGAN</button>
+			<button class="location-btn" onclick="showVideo('lewo', 'PASAR LEWO')">PASAR LEWO</button>
+			<button class="location-btn" onclick="showVideo('malangbong', 'PASAR MALANGBONG')">PASAR MALANGBONG</button>
+        </div>
+
+        <div id="videoContainer" class="video-container">
+            <div class="location-name" id="locationName"></div>
+            <video controls id="mainVideo">
+                <!-- Video source akan diubah melalui JavaScript -->
+            </video>
+        </div>
+
+        <div class="note">
+            Pilih lokasi CCTV di atas untuk menampilkan stream video
+        </div>
+    </div>
+
+    <script>
+        const videoSources = {
+            'tarogong': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/tarogong/s.mp4',
+            'simlim': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/simlim/s.mp4',
+            'kerkoff': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/kerkoff/s.mp4',
+            'suci': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/suci/s.mp4',
+            'ciwalen': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/ciwalen/s.mp4',
+            'maktal': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/maktal/s.mp4',
+			'jembatanmaktal': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/jembatanmaktal/s.mp4',
+            'sukadana': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/sukadana/s.mp4',
+            'bakorwil': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/bakorwil/s.mp4',
+            'bjb': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/bjb/s.mp4',
+            'cipanas': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/cipanas/s.mp4',
+            'wanaraja': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/wanaraja/s.mp4',
+			'sigobing': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/sigobing/s.mp4',
+            'pengkolan': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/pengkolan/s.mp4',
+			'leuwidaun': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/leuwidaun/s.mp4',
+			'kadungora': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/kadungora/s.mp4',
+			'limbangan': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/limbangan/s.mp4',
+			'lewo': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/lewo/s.mp4',
+			'malangbong': 'https://shinobi.garutkab.go.id/FYI5ypF4oVS0nc1pIy2HwnjnbDQsNf/mp4/csdR7AiwZ7/malangbong/s.mp4'
+        };
+
+        function showVideo(locationId, locationName) {
+            const videoContainer = document.getElementById('videoContainer');
+            const mainVideo = document.getElementById('mainVideo');
+            const locationNameElement = document.getElementById('locationName');
+
+            // Hentikan video yang sedang diputar
+            mainVideo.pause();
+            
+            // Update sumber video dan tampilkan container
+            mainVideo.innerHTML = `<source src="${videoSources[locationId]}" type="video/mp4">`;
+            locationNameElement.textContent = locationName;
+            videoContainer.classList.add('active');
+            
+            // Muat ulang video
+            mainVideo.load();
+        }
+    </script>
+</body>
+</html>
